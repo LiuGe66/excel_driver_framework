@@ -1,10 +1,11 @@
 import xlrd2
 from http_model.http_model import Model
+from openpyxl import load_workbook
 
 
 class ExcelReader:
     def Read(self):
-        reader = xlrd2.open_workbook(r'..\data\case.xlsx')  # 创建excel对象
+        reader = xlrd2.open_workbook(r'.\data\case.xlsx')  # 创建excel对象
         sheet_names = reader.sheet_names()  # 获取所有sheet名
         models = []
         # 在sheet页中循环
@@ -37,3 +38,13 @@ class ExcelReader:
                 if model.need_run == 1:
                     models.append(model)
         return models
+
+    def write(self, rows_num, result):
+        workbook = load_workbook(filename="./data/case.xlsx")
+        sheet = workbook.active
+        sheet[f"O{rows_num}"] = result
+        workbook.save(filename="./data/case.xlsx")
+
+
+if __name__ == '__main__':
+    ExcelReader().write(8, "Pass")

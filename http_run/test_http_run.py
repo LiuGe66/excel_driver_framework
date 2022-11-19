@@ -1,9 +1,9 @@
-from time import sleep
+import allure
+from Utils.excel_reader import *
+from Utils.logger_utils import print_log
 from http_api.httpcore import CoreHttp
 import jsonpath
-from excel_reader.excel_reader import ExcelReader
 import pytest
-import os
 
 
 class Test_HttpRun:
@@ -13,6 +13,7 @@ class Test_HttpRun:
 
     @pytest.mark.parametrize("model", models)
     def test_do_send_http(self, model, **kwargs):  # models是用例条数个对象
+        allure.dynamic.title(model.desc)
         if model.is_need:  # 判断是否需要抽取的值
             if self.contentData:  # 判断字典里有没有东西
                 for value in eval(model.need_value):  # model.need_value 是需要提取的key,如:['token']
@@ -31,23 +32,20 @@ class Test_HttpRun:
                 self.contentData.update({ex: j_res[0]})  # --> token : xxxxx , id: 6 contentData[key]
 
         # 几个元素 [参数] 外部传递
+        exc = ExcelReader()
         if model.assert_options == '包含':
-            assert jsonpath.jsonpath(res.json(), '$..' + model.assert_data)
-            print("第{}条用例{}断言通过".format(int(model.index), model.desc))
+            assert jsonpath.jsonpath(res.json(), '$..' + model.assert_data), exc.write(int(model.index) + 2, "Fail")
+            print_log("{}断言通过".format(model.desc))
+            exc.write(int(model.index) + 2, "Pass")
         if model.assert_options == '大于':
-            assert res.json()[model.assert_data] > model.assert_value
-            print("第{}条用例{}断言通过".format(int(model.index), model.desc))
+            assert res.json()[model.assert_data] > model.assert_value, exc.write(int(model.index) + 2, "Fail")
+            print_log("{}断言通过".format(model.desc))
+            exc.write(int(model.index) + 2, "Pass")
         if model.assert_options == '小于':
-            assert res.json()[model.assert_data] < model.assert_value
-            print("第{}条用例{}断言通过".format(int(model.index), model.desc))
+            assert res.json()[model.assert_data] < model.assert_value, exc.write(int(model.index) + 2, "Fail")
+            print_log("{}断言通过".format(model.desc))
+            exc.write(int(model.index) + 2, "Pass")
         if model.assert_options == '等于':
-            assert res.json()[model.assert_data] == model.assert_value
-            print("第{}条用例{}断言通过".format(int(model.index), model.desc))
-
-
-if __name__ == "__main__":
-    pytest.main(['-v', '--alluredir', '../report_data', '--clean-alluredir'])
-    sleep(3)
-    os.system('allure generate ../report_data -o ../report_html/ --clean')
-
-
+            assert res.json()[model.assert_data] == model.assert_value, exc.write(int(model.index) + 2, "Fail")
+            print_log("{}断言通过".format(model.desc))
+            exc.write(int(model.index) + 2, "Pass")
