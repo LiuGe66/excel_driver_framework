@@ -26,25 +26,38 @@ class ExcelReader:
                 model.url = data_list[2]
                 model.method = data_list[3]
                 model.headers = data_list[4]
-                model.req_type = data_list[5]
+                model.params = data_list[5]
                 model.data = data_list[6]
-                model.assert_data = data_list[7]
-                model.assert_options = data_list[8]
-                model.assert_value = data_list[9]
-                model.extract = data_list[10]
-                model.is_need = data_list[11]
-                model.need_value = data_list[12]
-                model.need_run = data_list[13]
-                if model.need_run == 1:
+                model.json = data_list[7]
+                model.assert_data = data_list[8]
+                model.assert_options = data_list[9]
+                model.assert_value = data_list[10]
+                model.extract = data_list[11]
+                model.is_need = data_list[12]
+                model.need_value = data_list[13]
+                model.cell_index = data_list[15]
+
+                if type(model.index) is float:
                     models.append(model)
+                    print("6666666666666", model.cell_index)
         return models
 
-    def write(self, rows_num, result):
+    def write_result(self, rows_num, result):
         workbook = load_workbook(filename="./data/case.xlsx")
         sheet = workbook.active
+        print(" 这里传的是几？？？",rows_num)
         sheet[f"O{rows_num}"] = result
+        workbook.save(filename="./data/case.xlsx")
+
+    def write_empty(self):
+        workbook = load_workbook(filename="./data/case.xlsx")
+        sheet = workbook.active
+        i = 3
+        while i < 1000:
+            sheet[f"O{i}"] = ""
+            i += 1
         workbook.save(filename="./data/case.xlsx")
 
 
 if __name__ == '__main__':
-    ExcelReader().write(8, "Pass")
+    pass

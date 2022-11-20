@@ -1,18 +1,26 @@
 import requests
-import json
+from Utils.logger_utils import print_log
 
 
 class CoreHttp:
-    def send_http(self, url, param_type, method, data=None, headers=None, **kwargs):
-        if param_type == 'json':
-            try:
-                json.dumps(data, ensure_ascii=False)  # è¦æ±‚ä¸è¦æŠŠæ±‰å­—å˜æˆASCIIç 
-                datas = eval(data)
-            except Exception as e:
-                raise Exception("æ— æ³•è½¬æ¢ä¸ºJSONæ ¼å¼ï¼Œè¯·æ£€æŸ¥ä½ è¾“å…¥å‚æ•°")
-            response = getattr(requests, method)(url, json=datas, headers=headers, **kwargs)
-        elif param_type == 'data':
-            response = getattr(requests, method)(url, data=data, headers=headers, **kwargs)
-        else:
-            response = getattr(requests, method)(url, params=data, headers=headers, **kwargs)
+    sess = requests.session()
+
+    def send_http(self, method, url, params=None, json=None, headers=None, data=None):
+        # print_log("ÇëÇó·½·¨ÊÇ£º%s" % (method))
+        # print("ÕâÒ²²»ĞĞÂğ")
+        # print_log("ÇëÇóµØÖ·ÊÇ£º{}".format(url))
+        # if params:
+        #     print_log("ÇëÇóparamsÊÇ£º{}".format(params))
+        # if json:
+        #     print_log("ÇëÇójosnÊÇ£º{}".format(json))
+        # if headers:
+        #     print_log("ÇëÇóheadersÊÇ£º{}".format(headers))
+        # if data:
+        #     print_log("ÇëÇódataÊÇ£º{}".format(data))
+        response = CoreHttp().sess.request(method, url, params=params, data=data, headers=headers, json=json)
         return response
+
+
+
+if __name__ == '__main__':
+    c = CoreHttp()
