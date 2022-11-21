@@ -36,16 +36,15 @@ class ExcelReader:
                 model.is_need = data_list[12]
                 model.need_value = data_list[13]
                 model.cell_index = data_list[15]
-
+                model.feature = data_list[16]
+                model.story = data_list[17]
                 if type(model.index) is float:
                     models.append(model)
-                    print("6666666666666", model.cell_index)
         return models
 
     def write_result(self, rows_num, result):
         workbook = load_workbook(filename="./data/case.xlsx")
         sheet = workbook.active
-        print(" 这里传的是几？？？",rows_num)
         sheet[f"O{rows_num}"] = result
         workbook.save(filename="./data/case.xlsx")
 
